@@ -1,50 +1,53 @@
 import streamlit as st
-from textblob import TextBlob
 import time
 
-st.set_page_config(page_title="IA Detector de Sinceridad", page_icon="🕵️‍♂️")
+st.set_page_config(page_title="IA Bio-Shield", page_icon="🔐", layout="centered")
 
-st.title("🕵️‍♂️ IA: Detector de Sinceridad Emocional")
-st.write("¿Tu texto coincide con tu realidad? Ponemos a prueba tu honestidad digital.")
+# Estilo visual impactante
+st.title("🔐 IA Bio-Shield: Access Control")
+st.markdown("---")
 
-# 1. Entrada de texto
-mensaje = st.text_input("Escribe cómo te sientes hoy:", placeholder="Ejemplo: Estoy muy feliz")
+st.subheader("Paso 1: Identificación por Voz/Texto")
+user_id = st.text_input("Ingrese su frase de seguridad (Passphrase):", placeholder="Ejemplo: El cielo está despejado hoy")
 
-if mensaje:
-    # Procesamiento de Lenguaje Natural (NLP) simple
-    blob = TextBlob(mensaje)
-    score = blob.sentiment.polarity
+if user_id:
+    st.info("🔄 Procesando frecuencia semántica...")
+    time.sleep(1)
     
-    st.subheader("📸 Paso 2: Validación Visual")
-    st.info("Asegúrate de usar la cámara frontal para el escaneo facial.")
+    st.subheader("Paso 2: Escaneo de Biometría Facial")
+    st.write("Colóquese frente al sensor (Cámara Frontal)")
     
-    # El componente camera_input en dispositivos móviles 
-    # suele abrir la cámara frontal por defecto.
-    img_file = st.camera_input("Captura tu expresión actual")
-    
+    # Cámara frontal
+    img_file = st.camera_input("Iniciando escaneo de retina y puntos faciales...")
+
     if img_file:
-        with st.spinner('Analizando incongruencias biométricas...'):
-            time.sleep(2) # Efecto de carga para la feria
-            
-            st.divider()
-            
-            # Lógica de detección
-            # Buscamos palabras clave para determinar si hay "mentira"
-            palabras_positivas = ["feliz", "bien", "alegre", "contento", "excelente"]
-            es_mensaje_positivo = any(p in mensaje.lower() for p in palabras_positivas)
+        progress_bar = st.progress(0)
+        status_text = st.empty()
 
-            if es_mensaje_positivo:
-                st.warning("⚠️ RESULTADO: INCONGRUENCIA DETECTADA")
-                st.write(f"**Análisis de Texto:** Tu mensaje indica optimismo.")
-                st.write("**Análisis Facial:** La IA detecta micro-expresiones de fatiga o neutralidad.")
-                st.error("🚨 Veredicto: Estás ocultando algo. Tu sonrisa no llega a los ojos.")
-            else:
-                st.success("✅ RESULTADO: SINCERIDAD TOTAL")
-                st.write("**Análisis:** Tu estado emocional verbal y físico están en armonía.")
+        # Simulacro de análisis profundo
+        for i in range(100):
+            time.sleep(0.02)
+            progress_bar.progress(i + 1)
+            if i < 30: status_text.text("🔍 Detectando puntos de referencia...")
+            elif i < 60: status_text.text("🧬 Analizando patrón de iris...")
+            else: status_text.text("🛰️ Verificando base de datos global...")
 
-st.sidebar.markdown("### Configuración de IA")
-st.sidebar.write("Priorizando: **Cámara Frontal (Selfie Mode)**")
-st.sidebar.write("Algoritmo: **Análisis de Disonancia Semántica**")
+        st.divider()
 
-st.sidebar.write("- **NLP:** Análisis de texto.")
-st.sidebar.write("- **Deep Learning:** Redes neuronales para detección de micro-expresiones faciales.")
+        # Lógica de "Acceso" basada en la longitud del texto o palabras clave
+        if len(user_id) > 15:
+            st.success("✅ IDENTIDAD VERIFICADA")
+            st.balloons()
+            st.write("### 📂 ACCESO CONCEDIDO")
+            st.write("**Usuario:** Agente Especial - Feria de IA")
+            st.write("**Nivel de Confianza:** 98.7%")
+            st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueW9ueW9ueW9ueW9ueW9ueW9ueW9ueW9ueW9ueW9ueW9ueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7TKSjPQCK9Lp3pG8/giphy.gif", width=300)
+        else:
+            st.error("❌ ACCESO DENEGADO")
+            st.write("**Motivo:** El patrón de voz/texto no coincide con los rasgos faciales detectados.")
+            st.write("Intente con una frase más larga para sincronizar la biometría.")
+            st.warning("⚠️ Alerta de seguridad enviada al servidor central.")
+
+st.sidebar.markdown("### Especificaciones Técnicas")
+st.sidebar.write("• **Motor:** Neural Pattern Matcher v4.2")
+st.sidebar.write("• **Seguridad:** Encriptación de grado militar")
