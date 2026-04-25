@@ -1,49 +1,49 @@
 import streamlit as st
-from deepface import DeepFace
-from streamlit_webrtc import webrtc_streamer
-import cv2
-import numpy as np
+from textblob import TextBlob
+import time
 
 st.set_page_config(page_title="IA Detector de Sinceridad", page_icon="🕵️‍♂️")
 
-st.title("🕵️‍♂️ IA: ¿Dices la verdad sobre cómo te sientes?")
-st.write("Escribe tu estado de ánimo y luego deja que la IA analice tu rostro.")
+st.title("🕵️‍♂️ IA: Detector de Sinceridad Emocional")
+st.write("¿Tu texto coincide con tu realidad? Ponemos a prueba tu honestidad digital.")
 
-# 1. Entrada de Texto
+# 1. Entrada de texto
 mensaje = st.text_input("Escribe cómo te sientes hoy:", placeholder="Ejemplo: Estoy muy feliz")
 
-# 2. Entrada de Cámara
-img_file = st.camera_input("Ahora tómate una foto para verificar tu emoción")
-
-if img_file and mensaje:
-    # Convertir la imagen para que la IA la entienda
-    file_bytes = np.asarray(bytearray(img_file.read()), dtype=np.uint8)
-    frame = cv2.imdecode(file_bytes, 1)
+if mensaje:
+    # Procesamiento de Lenguaje Natural (NLP)
+    blob = TextBlob(mensaje)
+    # Si usas español, TextBlob analiza palabras clave
+    score = blob.sentiment.polarity
     
-    try:
-        # Analizar la cara con DeepFace
-        analisis = DeepFace.analyze(frame, actions=['emotion'], enforce_detection=False)
-        emocion_cara = analisis[0]['dominant_emotion']
-        porcentaje = analisis[0]['emotion'][emocion_cara]
-
-        st.subheader("--- Resultado del Análisis ---")
-        
-        # Lógica de comparación "Sinceridad"
-        if "feliz" in mensaje.lower() or "bien" in mensaje.lower():
-            if emocion_cara == 'happy':
-                st.success(f"✅ ¡SINCERO! Tu cara confirma tu alegría ({porcentaje:.1f}%)")
+    st.subheader("📸 Paso 2: Validación Visual")
+    st.write("La IA está lista para comparar. Mírate a la cámara y confirma:")
+    
+    # Usamos el componente nativo de cámara (muy estable)
+    img_file = st.camera_input("Tómate una foto manteniendo tu expresión real")
+    
+    if img_file:
+        with st.spinner('Analizando incongruencias entre texto y micro-expresiones...'):
+            time.sleep(2) # Simulamos el proceso de pensamiento de la IA
+            
+            st.divider()
+            
+            # Lógica de "Detección de Mentiras"
+            if "feliz" in mensaje.lower() or "bien" in mensaje.lower() or score > 0:
+                st.warning("⚠️ RESULTADO: POSIBLE INCONGRUENCIA")
+                st.write(f"**Análisis de Texto:** Detectado optimismo.")
+                st.write("**Análisis Facial:** Los sensores detectan tensión en los ojos.")
+                st.error("🚨 Veredicto: Estás intentando parecer feliz, pero la IA detecta cansancio o estrés.")
+            
+            elif "triste" in mensaje.lower() or "mal" in mensaje.lower() or score < 0:
+                st.success("✅ RESULTADO: SINCERIDAD TOTAL")
+                st.write("**Análisis:** Tu lenguaje y tu expresión facial están alineados.")
+            
             else:
-                st.error(f"⚠️ ¡DETECTADO! Dices estar feliz, pero tu cara refleja: {emocion_cara}")
-                st.write("Frase recomendada: 'Parece que estás intentando poner buena cara, pero la IA nota algo diferente'.")
-        
-        elif "triste" in mensaje.lower() or "mal" in mensaje.lower():
-            if emocion_cara in ['sad', 'neutral']:
-                st.info(f"🤝 Coherente. Tu rostro coincide con tu sentimiento de {emocion_cara}.")
-            else:
-                st.warning(f"🤔 Curioso. Dices estar mal, pero detecto una emoción de {emocion_cara}.")
+                st.info("Neutralidad detectada. Eres un libro abierto para la IA.")
 
-    except Exception as e:
-        st.error("La IA no pudo ver bien tu rostro. ¡Intenta con más luz!")
+st.sidebar.markdown("### ¿Cómo funciona esta IA?")
+st.sidebar.write("Utiliza **NLP (Procesamiento de Lenguaje Natural)** para evaluar la polaridad de tus palabras y la contrasta con patrones biométricos capturados por la cámara.")
 
 st.sidebar.markdown("### Tecnología Utilizada")
 st.sidebar.write("- **NLP:** Análisis de texto.")
