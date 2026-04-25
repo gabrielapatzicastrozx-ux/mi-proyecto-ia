@@ -1,4 +1,2 @@
 streamlit
-deepface
-opencv-contrib-python-headless
-tf-keras
+textblob
