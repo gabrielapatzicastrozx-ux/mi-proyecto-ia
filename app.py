@@ -1,53 +1,60 @@
 import streamlit as st
 import time
+import random
 
-st.set_page_config(page_title="IA Bio-Shield", page_icon="🔐", layout="centered")
+st.set_page_config(page_title="IA Face Matcher", page_icon="🎭")
 
-# Estilo visual impactante
-st.title("🔐 IA Bio-Shield: Access Control")
-st.markdown("---")
+st.title("🎭 IA: Buscador de Gemelos en el Multiverso")
+st.write("¿Alguna vez te dijeron que te pareces a alguien famoso? La IA lo confirmará hoy.")
 
-st.subheader("Paso 1: Identificación por Voz/Texto")
-user_id = st.text_input("Ingrese su frase de seguridad (Passphrase):", placeholder="Ejemplo: El cielo está despejado hoy")
+# 1. Selección de Mundo
+opcion = st.selectbox(
+    "¿En qué mundo quieres buscar a tu doble?",
+    ("Personajes de Disney", "Jugadores de Fútbol", "Actores/Actrices de Cine")
+)
 
-if user_id:
-    st.info("🔄 Procesando frecuencia semántica...")
-    time.sleep(1)
-    
-    st.subheader("Paso 2: Escaneo de Biometría Facial")
-    st.write("Colóquese frente al sensor (Cámara Frontal)")
-    
-    # Cámara frontal
-    img_file = st.camera_input("Iniciando escaneo de retina y puntos faciales...")
+nombre_usuario = st.text_input("¿Cómo te llamas?", placeholder="Tu nombre aquí")
+
+if nombre_usuario:
+    # 2. Captura de Cámara
+    img_file = st.camera_input("Escaneando tus rasgos faciales...")
 
     if img_file:
-        progress_bar = st.progress(0)
-        status_text = st.empty()
-
-        # Simulacro de análisis profundo
-        for i in range(100):
-            time.sleep(0.02)
-            progress_bar.progress(i + 1)
-            if i < 30: status_text.text("🔍 Detectando puntos de referencia...")
-            elif i < 60: status_text.text("🧬 Analizando patrón de iris...")
-            else: status_text.text("🛰️ Verificando base de datos global...")
+        with st.status("🧬 Analizando simetría facial y puntos biométricos...", expanded=True) as status:
+            time.sleep(1.5)
+            st.write("📸 Extrayendo mapa de texturas...")
+            time.sleep(1.2)
+            st.write(f"📂 Buscando en la base de datos de {opcion}...")
+            time.sleep(1.3)
+            status.update(label="¡Match Encontrado!", state="complete", expanded=False)
 
         st.divider()
 
-        # Lógica de "Acceso" basada en la longitud del texto o palabras clave
-        if len(user_id) > 15:
-            st.success("✅ IDENTIDAD VERIFICADA")
-            st.balloons()
-            st.write("### 📂 ACCESO CONCEDIDO")
-            st.write("**Usuario:** Agente Especial - Feria de IA")
-            st.write("**Nivel de Confianza:** 98.7%")
-            st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueW9ueW9ueW9ueW9ueW9ueW9ueW9ueW9ueW9ueW9ueW9ueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7TKSjPQCK9Lp3pG8/giphy.gif", width=300)
-        else:
-            st.error("❌ ACCESO DENEGADO")
-            st.write("**Motivo:** El patrón de voz/texto no coincide con los rasgos faciales detectados.")
-            st.write("Intente con una frase más larga para sincronizar la biometría.")
-            st.warning("⚠️ Alerta de seguridad enviada al servidor central.")
+        # Bases de datos de personajes
+        base_datos = {
+            "Personajes de Disney": ["Cenicienta", "Elsa", "Tarzán", "Hércules", "Moana", "Simba (Humano)", "Bella"],
+            "Jugadores de Fútbol": ["Lionel Messi", "Cristiano Ronaldo", "Neymar Jr", "Kylian Mbappé", "Alexia Putellas", "Vinícius Jr"],
+            "Actores/Actrices de Cine": ["Tom Holland", "Zendaya", "Robert Downey Jr", "Scarlett Johansson", "The Rock", "Emma Watson"]
+        }
 
-st.sidebar.markdown("### Especificaciones Técnicas")
-st.sidebar.write("• **Motor:** Neural Pattern Matcher v4.2")
-st.sidebar.write("• **Seguridad:** Encriptación de grado militar")
+        # La IA elige uno basado en el nombre para que sea "su" personaje siempre
+        random.seed(nombre_usuario.lower() + opcion)
+        personaje = random.choice(base_datos[opcion])
+        porcentaje = random.randint(75, 99)
+
+        # Resultado
+        st.balloons()
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.image(img_file, caption="Tu Rostro", width=250)
+        
+        with col2:
+            st.markdown(f"### ¡Eres un {porcentaje}% idéntico a:")
+            st.header(f"✨ {personaje} ✨")
+            st.write(f"La IA detectó una coincidencia estructural en tus pómulos y mirada con **{personaje}**.")
+
+        st.info("💡 Consejo de la IA: ¡Deberías pedirle un autógrafo a tu espejo!")
+
+st.sidebar.markdown("### ¿Cómo funciona?")
+st.sidebar.write("Utiliza un algoritmo de **Reconocimiento de Patrones Visuales** que compara la distancia entre ojos, nariz y boca con una base de datos pre-cargada.")
