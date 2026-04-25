@@ -1,25 +1,35 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer
-import mediapipe as mp
-import cv2
+from textblob import TextBlob
 
-# Configuración de la página
-st.set_page_config(page_title="IA Facial", layout="wide")
-st.title("🎭 Analizador de Identidad Digital (IA)")
-st.write("Esta IA mapea 468 puntos de tu rostro para crear un modelo digital en 3D.")
+st.set_page_config(page_title="Detector de Emociones IA", page_icon="🧠")
 
-# Inicializar Mediapipe
-mp_face_mesh = mp.solutions.face_mesh
-face_mesh = mp_face_mesh.FaceMesh(max_num_faces=1)
-mp_drawing = mp.solutions.drawing_utils
+st.title("🧠 Detector de Emociones con IA")
+st.write("Escribe cómo te sientes o qué piensas, y la IA analizará tu sentimiento.")
 
-def video_frame_callback(frame):
-    img = frame.to_ndarray(format="bgr24")
-    results = face_mesh.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+texto = st.text_input("Escribe algo aquí:", placeholder="Ejemplo: Estoy muy emocionado por esta feria")
 
-    if results.multi_face_landmarks:
-        for res in results.multi_face_landmarks:
-            mp_drawing.draw_landmarks(img, res, mp_face_mesh.FACEMESH_TESSELATION)
-    return frame.from_ndarray(img, format="bgr24")
+if texto:
+    # La IA analiza el texto
+    analisis = TextBlob(texto)
+    # Traducimos polaridad a algo entendible
+    polaridad = analisis.sentiment.polarity
+    
+    st.divider()
+    st.subheader("Resultado del Análisis:")
+    
+    if polaridad > 0.3:
+        st.balloons()
+        st.success(f"🤩 ¡SUPER POSITIVO! (Puntaje: {polaridad:.2f})")
+        st.write("La IA detecta mucha alegría y entusiasmo en tus palabras.")
+    elif polaridad > 0:
+        st.info(f"🙂 Positivo (Puntaje: {polaridad:.2f})")
+        st.write("Parece que te sientes bien.")
+    elif polaridad < 0:
+        st.error(f"😔 Negativo (Puntaje: {polaridad:.2f})")
+        st.write("La IA detecta tristeza, enojo o frustración.")
+    else:
+        st.warning(f"😐 Neutral (Puntaje: {polaridad:.2f})")
+        st.write("No detecto una emoción clara, pareces estar tranquilo.")
 
-webrtc_streamer(key="ia-face", video_frame_callback=video_frame_callback)
+st.sidebar.markdown("### ¿Cómo funciona?")
+st.sidebar.write("Esta IA usa **NLP (Procesamiento de Lenguaje Natural)** para entender el valor emocional de las palabras.")
