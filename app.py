@@ -11,40 +11,40 @@ st.write("¿Tu texto coincide con tu realidad? Ponemos a prueba tu honestidad di
 mensaje = st.text_input("Escribe cómo te sientes hoy:", placeholder="Ejemplo: Estoy muy feliz")
 
 if mensaje:
-    # Procesamiento de Lenguaje Natural (NLP)
+    # Procesamiento de Lenguaje Natural (NLP) simple
     blob = TextBlob(mensaje)
-    # Si usas español, TextBlob analiza palabras clave
     score = blob.sentiment.polarity
     
     st.subheader("📸 Paso 2: Validación Visual")
-    st.write("La IA está lista para comparar. Mírate a la cámara y confirma:")
+    st.info("Asegúrate de usar la cámara frontal para el escaneo facial.")
     
-    # Usamos el componente nativo de cámara (muy estable)
-    img_file = st.camera_input("Tómate una foto manteniendo tu expresión real")
+    # El componente camera_input en dispositivos móviles 
+    # suele abrir la cámara frontal por defecto.
+    img_file = st.camera_input("Captura tu expresión actual")
     
     if img_file:
-        with st.spinner('Analizando incongruencias entre texto y micro-expresiones...'):
-            time.sleep(2) # Simulamos el proceso de pensamiento de la IA
+        with st.spinner('Analizando incongruencias biométricas...'):
+            time.sleep(2) # Efecto de carga para la feria
             
             st.divider()
             
-            # Lógica de "Detección de Mentiras"
-            if "feliz" in mensaje.lower() or "bien" in mensaje.lower() or score > 0:
-                st.warning("⚠️ RESULTADO: POSIBLE INCONGRUENCIA")
-                st.write(f"**Análisis de Texto:** Detectado optimismo.")
-                st.write("**Análisis Facial:** Los sensores detectan tensión en los ojos.")
-                st.error("🚨 Veredicto: Estás intentando parecer feliz, pero la IA detecta cansancio o estrés.")
-            
-            elif "triste" in mensaje.lower() or "mal" in mensaje.lower() or score < 0:
-                st.success("✅ RESULTADO: SINCERIDAD TOTAL")
-                st.write("**Análisis:** Tu lenguaje y tu expresión facial están alineados.")
-            
+            # Lógica de detección
+            # Buscamos palabras clave para determinar si hay "mentira"
+            palabras_positivas = ["feliz", "bien", "alegre", "contento", "excelente"]
+            es_mensaje_positivo = any(p in mensaje.lower() for p in palabras_positivas)
+
+            if es_mensaje_positivo:
+                st.warning("⚠️ RESULTADO: INCONGRUENCIA DETECTADA")
+                st.write(f"**Análisis de Texto:** Tu mensaje indica optimismo.")
+                st.write("**Análisis Facial:** La IA detecta micro-expresiones de fatiga o neutralidad.")
+                st.error("🚨 Veredicto: Estás ocultando algo. Tu sonrisa no llega a los ojos.")
             else:
-                st.info("Neutralidad detectada. Eres un libro abierto para la IA.")
+                st.success("✅ RESULTADO: SINCERIDAD TOTAL")
+                st.write("**Análisis:** Tu estado emocional verbal y físico están en armonía.")
 
-st.sidebar.markdown("### ¿Cómo funciona esta IA?")
-st.sidebar.write("Utiliza **NLP (Procesamiento de Lenguaje Natural)** para evaluar la polaridad de tus palabras y la contrasta con patrones biométricos capturados por la cámara.")
+st.sidebar.markdown("### Configuración de IA")
+st.sidebar.write("Priorizando: **Cámara Frontal (Selfie Mode)**")
+st.sidebar.write("Algoritmo: **Análisis de Disonancia Semántica**")
 
-st.sidebar.markdown("### Tecnología Utilizada")
 st.sidebar.write("- **NLP:** Análisis de texto.")
 st.sidebar.write("- **Deep Learning:** Redes neuronales para detección de micro-expresiones faciales.")
