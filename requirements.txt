@@ -1,2 +1,5 @@
 streamlit
-textblob
+streamlit-webrtc
+deepface
+tf-keras
+opencv-contrib-python-headless
