@@ -1,34 +1,25 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
-import cv2
+from streamlit_webrtc import webrtc_streamer
 import mediapipe as mp
-import numpy as np
+import cv2
 
-# Configuración de Mediapipe
+# Configuración de la página
+st.set_page_config(page_title="IA Facial", layout="wide")
+st.title("🎭 Analizador de Identidad Digital (IA)")
+st.write("Esta IA mapea 468 puntos de tu rostro para crear un modelo digital en 3D.")
+
+# Inicializar Mediapipe
 mp_face_mesh = mp.solutions.face_mesh
-face_mesh = mp_face_mesh.FaceMesh(static_image_mode=False, max_num_faces=1, min_detection_confidence=0.5)
+face_mesh = mp_face_mesh.FaceMesh(max_num_faces=1)
 mp_drawing = mp.solutions.drawing_utils
-drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1, color=(0, 255, 0))
 
-st.title("🎭 IA Identity Mirror")
-st.write("Acércate a la cámara para ver cómo la Inteligencia Artificial mapea tu rostro en tiempo real.")
+def video_frame_callback(frame):
+    img = frame.to_ndarray(format="bgr24")
+    results = face_mesh.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
-class FaceTransformer(VideoTransformerBase):
-    def transform(self, frame):
-        img = frame.to_ndarray(format="bgr24")
-        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        results = face_mesh.process(img_rgb)
+    if results.multi_face_landmarks:
+        for res in results.multi_face_landmarks:
+            mp_drawing.draw_landmarks(img, res, mp_face_mesh.FACEMESH_TESSELATION)
+    return frame.from_ndarray(img, format="bgr24")
 
-        if results.multi_face_landmarks:
-            for face_landmarks in results.multi_face_landmarks:
-                mp_drawing.draw_landmarks(
-                    image=img,
-                    landmark_list=face_landmarks,
-                    connections=mp_face_mesh.FACEMESH_TESSELATION,
-                    landmark_drawing_spec=None,
-                    connection_drawing_spec=drawing_spec
-                )
-        return img
-
-webrtc_streamer(key="face-mesh", video_transformer_factory=FaceTransformer)
-st.info("Esta tecnología utiliza Redes Neuronales para identificar 468 puntos de referencia en tu cara.")
+webrtc_streamer(key="ia-face", video_frame_callback=video_frame_callback)
