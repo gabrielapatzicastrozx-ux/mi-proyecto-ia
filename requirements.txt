@@ -1,3 +1,2 @@
 streamlit
-mediapipe
-opencv-contrib-python-headless
+textblob
